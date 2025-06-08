@@ -1,7 +1,11 @@
 # Homelab Setup
 
+## Server setup
+
+Install and configure Debian 12 server as per [this document](os/README.md).
+
 ## Services
 
-## VPN
+### CloudFlare Tunnel
 
-[WireGuard server](linuxserver/docker-wireguard) with [LocalToNet](https://localtonet.com).
+Exposes Kubernetes API to the internet. [Documentation](cloudflared/README.md).
