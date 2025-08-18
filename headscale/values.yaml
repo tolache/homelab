@@ -1,0 +1,6 @@
+# Default values for headscale.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+domainName: ""
+headscaleVersion: "0.26.1"

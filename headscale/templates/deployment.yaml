@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: headscale
+        image: "headscale/headscale:{{ .Values.headscaleVersion }}"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        command: [ "headscale", "serve" ]
+        volumeMounts:
+        - name: config
+          mountPath: /etc/headscale
+        - name: data
+          mountPath: /var/lib/headscale
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "0.5"
+          requests:
+            memory: 256Mi
+            cpu: "0.25"
+      volumes:
+      - name: config
+        configMap:
+          name: {{ .Release.Name }}-config
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-data

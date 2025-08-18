@@ -7,4 +7,6 @@ ingress:
   service: https://{{ .Values.k8s.apiServerName }}:6443
   originRequest:
     noTLSVerify: true
+- hostname: headscale.{{ .Values.domainName }}
+  service: http://{{ .Values.k8s.serviceAccountName }}:30180
 - service: http_status:404

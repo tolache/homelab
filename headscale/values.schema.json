@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "type": "object",
+  "properties": {
+    "domainName": {
+      "type": "string",
+      "minLength": 3,
+      "description": "The domain name used by CloudFlare Tunnel for Headscale (required)"
+    },
+    "headscaleVersion": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The tag of the headscale/headscale container image (required)"
+    }
+  },
+  "required": ["domainName", "headscaleVersion"]
+}
