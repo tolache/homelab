@@ -1,56 +1,59 @@
 # CloudFlare Tunnel
 
+This cloudflared deployment exposes the Kubernetes cluster API to the internet
+and creates a cluster admin token-based service account for accessing the cluster API from across the internet
+without an mTLS proxy.
+
 ## Prerequisites
 
-Requires a Kubernetes cluster. [Documentation](../os/README.md#install-k3s).
+- A Kubernetes cluster. [How to set it up](../os/README.md#install-k3s).
+- A free CloudFlare account.
+- A domain name.
+- [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) command-line tool installed and configured to access your CloudFlare account.
+- kubectl installed and configured to access the cluster.
+- Helm installed.
+- [yq](https://github.com/mikefarah/yq) installed.
 
 ## Setup
 
 > [!NOTE]  
 > The repo paths are relative to the repo root.
 
-1. Create the `.env` file:
+1. Run `cp ./cloudflared/values.yaml ./cloudflared/values.secrets.yaml` and populate the missing values in the new file.
+
+2. Create a tunnel in CloudFlare:
 
     ```shell
-    cp ./cloudflared/.env.example ./cloudflared/.env
-    ```
-
-1. Set values in the `.env` file.
-
-1. Load the values into the shell. Further steps will use substitution on the shell level.
-
-    ```shell
-    source ./cloudflared/.env
-    ```
-
-1. Create a tunnel in CloudFlare:
-
-    ```shell
+    TUNNEL_NAME="$(yq -r '.tunnel.name' ./cloudflared/values.secrets.yaml)"
+    DOMAIN_NAME="$(yq -r '.domainName' ./cloudflared/values.secrets.yaml)"
     cloudflared tunnel login
     cloudflared tunnel create $TUNNEL_NAME
-    # note the created tunnel ID and set the TUNNEL_ID variable
+    TUNNEL_ID="use note the tunnel ID from the command output above"
     cloudflared tunnel route dns $TUNNEL_NAME k8s.$DOMAIN_NAME
     ```
 
-1. Create the tunnel secret:
+3. Create the tunnel secret:
 
     ```shell
-    kubectl create secret generic tunnel-credentials --from-file=credentials.json=$HOME/.cloudflared/$TUNNEL_ID.json
+    RELEASE_NAME="cloudflared-prod"
+    kubectl get namespace $RELEASE_NAME || kubectl create namespace $RELEASE_NAME
+    kubectl create secret generic tunnel-credentials --from-file=credentials.json=$HOME/.cloudflared/$TUNNEL_ID.json --namespace $RELEASE_NAME
     ```
 
-1. Deploy cloudflared:
+4. Deploy cloudflared:
 
     ```shell
-    bash -c 'export $(grep -v "^#" ./cloudflared/.env | xargs) && envsubst "\${TUNNEL_NAME} \${DOMAIN_NAME} \${K8S_API_SERVER_NAME}" < ./cloudflared/cloudflared.yaml | kubectl apply -f -'
+    helm install $RELEASE_NAME ./cloudflared \
+      --namespace $RELEASE_NAME \
+      --create-namespace \
+      --values ./cloudflared/values.secrets.yaml
     ```
 
-1. Create service account credentials for accessing the cluster API through the internet without an mTLS proxy.
+5. Get the created secret token value:
 
     ```shell
-    kubectl create serviceaccount $SERVICE_ACCOUNT_NAME
-    bash -c 'export $(grep -v "^#" ./cloudflared/.env | xargs) && envsubst "\${SERVICE_ACCOUNT_NAME}" < ./cloudflared/service-account-secret.yaml | kubectl apply -f -'
-    bash -c 'export $(grep -v "^#" ./cloudflared/.env | xargs) && envsubst "\${SERVICE_ACCOUNT_NAME}" < ./cloudflared/service-account-role-binding.yaml | kubectl apply -f -'
-    kubectl get secret $SERVICE_ACCOUNT_NAME-token -o jsonpath='{.data.token}' | base64 -d
+    SERVICE_ACCOUNT_NAME="$(yq -r '.k8s.serviceAccountName' ./cloudflared/values.secrets.yaml)"
+    kubectl get secret $SERVICE_ACCOUNT_NAME-token --namespace $RELEASE_NAME --output jsonpath='{.data.token}' | base64 -d
     ```
 
-1. Save the token value from the output of the last command. It can be used in kubeconfig on by an application.
+6. Save the token value from the output of the last command. It can be used in kubeconfig on by an application to access the cluster API from the internet without an mTLS proxy.

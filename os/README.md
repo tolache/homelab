@@ -117,13 +117,13 @@ curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -s - --tls-san k8s.$
 
 ```shell
 $DOCKERHUB_USERNAME="example-user"
-$DOCKERHUB_PASSWORD="example-password"
+$DOCKERHUB_TOKEN="dckr_pat_xxxx" # Create one at https://app.docker.com/settings/personal-access-tokens
 cat <<EOF > /etc/rancher/k3s/registries.yaml
 configs:
   registry-1.docker.io:
     auth:
       username: $DOCKERHUB_USERNAME
-      password: $DOCKERHUB_PASSWORD
+      token: $DOCKERHUB_TOKEN
 EOF
 sudo systemctl daemon-reload
 sudo systemctl restart k3s

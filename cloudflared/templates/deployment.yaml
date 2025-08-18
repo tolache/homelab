@@ -2,20 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cloudflared
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{ include "cloudflared.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app: cloudflared
+      {{ include "cloudflared.selectorLabels" . | nindent 6 }}
   replicas: 1
   template:
     metadata:
       labels:
-        app: cloudflared
+        {{ include "cloudflared.labels" . | nindent 8 }}
     spec:
       containers:
       - name: cloudflared
-        image: cloudflare/cloudflared:2025.4.2
+        image: "cloudflare/cloudflared:{{ default .Chart.AppVersion .Values.cloudflaredVersion }}"
         args:
         - tunnel
         - --config
@@ -43,29 +46,12 @@ spec:
             memory: 128Mi
             cpu: "0.1"
       volumes:
-      - name: creds
-        secret:
-          secretName: tunnel-credentials
       - name: config
         configMap:
-          name: cloudflared
+          name: {{ .Chart.Name }}-config
           items:
           - key: config.yaml
             path: config.yaml
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: cloudflared
-data:
-  config.yaml: |
-    tunnel: ${TUNNEL_NAME}
-    credentials-file: /etc/cloudflared/creds/credentials.json
-    metrics: 0.0.0.0:2000
-    no-autoupdate: true
-    ingress:
-    - hostname: k8s.${DOMAIN_NAME}
-      service: https://${K8S_API_SERVER_NAME}:6443
-      originRequest:
-        noTLSVerify: true
-    - service: http_status:404
+      - name: creds
+        secret:
+          secretName: {{ .Values.tunnel.secretName }}

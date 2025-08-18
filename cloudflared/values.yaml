@@ -1,0 +1,12 @@
+# Default values for cloudflared.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+cloudflaredVersion: null  # leave null to use Chart.appVersion by default
+tunnel:
+  name: null
+  secretName: "tunnel-credentials"
+domainName: null
+k8s:
+  apiServerName: null
+  serviceAccountName: null

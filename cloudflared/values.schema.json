@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "type": "object",
+  "properties": {
+    "cloudflaredVersion": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "description": "The tag of the cloudflared/cloudflared container image"
+    },
+    "tunnel": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "CloudFlare Tunnel name"
+        },
+        "secretName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The name of the Kubernetes secret containing the CloudFlare Tunnel credentials."
+        }
+      },
+      "required": [
+        "name",
+        "secretName"
+      ]
+    },
+    "domainName": {
+      "type": "string",
+      "minLength": 3,
+      "description": "The domain name used by CloudFlare Tunnel"
+    },
+    "k8s": {
+      "type": "object",
+      "properties": {
+        "apiServerName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Kubernetes API server name"
+        },
+        "serviceAccountName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Kubernetes service account name for authenticating via CloudFlare Tunnel"
+        }
+      },
+      "required": [
+        "apiServerName",
+        "serviceAccountName"
+      ]
+    }
+  },
+  "required": [
+    "tunnel",
+    "domainName",
+    "k8s"
+  ]
+}
