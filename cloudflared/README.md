@@ -16,16 +16,13 @@ without an mTLS proxy.
 
 ## Setup
 
-> [!NOTE]  
-> The repo paths are relative to the repo root.
-
-1. Run `cp ./cloudflared/values.yaml ./cloudflared/values.secrets.yaml` and populate the missing values in the new file.
+1. Run `cp values.yaml values.secrets.yaml` and populate the missing values in the new file.
 
 2. Create a tunnel in CloudFlare:
 
     ```shell
-    TUNNEL_NAME="$(yq -r '.tunnel.name' ./cloudflared/values.secrets.yaml)"
-    DOMAIN_NAME="$(yq -r '.domainName' ./cloudflared/values.secrets.yaml)"
+    TUNNEL_NAME="$(yq -r '.tunnel.name' values.secrets.yaml)"
+    DOMAIN_NAME="$(yq -r '.domainName' values.secrets.yaml)"
     cloudflared tunnel login
     cloudflared tunnel create $TUNNEL_NAME
     TUNNEL_ID="use note the tunnel ID from the command output above"
@@ -43,16 +40,16 @@ without an mTLS proxy.
 4. Deploy cloudflared:
 
     ```shell
-    helm install $RELEASE_NAME ./cloudflared \
+    helm install $RELEASE_NAME . \
       --namespace $RELEASE_NAME \
       --create-namespace \
-      --values ./cloudflared/values.secrets.yaml
+      --values values.secrets.yaml
     ```
 
 5. Get the created secret token value:
 
     ```shell
-    SERVICE_ACCOUNT_NAME="$(yq -r '.k8s.serviceAccountName' ./cloudflared/values.secrets.yaml)"
+    SERVICE_ACCOUNT_NAME="$(yq -r '.k8s.serviceAccountName' values.secrets.yaml)"
     kubectl get secret $SERVICE_ACCOUNT_NAME-token --namespace $RELEASE_NAME --output jsonpath='{.data.token}' | base64 -d
     ```
 
