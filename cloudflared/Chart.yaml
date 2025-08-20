@@ -1,6 +1,6 @@
 apiVersion: v2
 name: cloudflared
-description: A cloudflared Helm chart for deploying CloudFlare tunnel service to expose Kubernetes cluster API
+description: A CloudFlare tunnel service to expose Kubernetes cluster API
 type: application
-version: 1.0.4
+version: 1.0.5
 appVersion: "2025.8.0"
