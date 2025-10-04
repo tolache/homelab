@@ -2,5 +2,5 @@ apiVersion: v2
 name: cloudflared
 description: A CloudFlare tunnel service to expose Kubernetes cluster API
 type: application
-version: 1.0.5
-appVersion: "2025.8.0"
+version: 1.0.8
+appVersion: "2025.9.1"

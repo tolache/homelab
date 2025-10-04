@@ -110,7 +110,7 @@ sudo reboot
 
 ```shell
 $DOMAIN_NAME="example.com"
-curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -s - --tls-san k8s.$DOMAIN_NAME
+curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -s - --tls-san k8s.$DOMAIN_NAME --tls-san tc.$DOMAIN_NAME
 ```
 
 ### Authorize K3s in Docker Hub

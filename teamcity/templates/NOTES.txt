@@ -1,0 +1,5 @@
+To connect to TeamCity via (ClusterIP):
+  kubectl -n {{ .Release.Namespace }} port-forward svc/teamcity 8111:8111
+  open http://localhost:8111
+
+The Postgres credentials are stored in Secret "{{ .Values.postgres.secretName }}".

@@ -27,6 +27,7 @@ without an mTLS proxy.
     cloudflared tunnel create $TUNNEL_NAME
     TUNNEL_ID="use note the tunnel ID from the command output above"
     cloudflared tunnel route dns $TUNNEL_NAME k8s.$DOMAIN_NAME
+    cloudflared tunnel route dns $TUNNEL_NAME tc.$DOMAIN_NAME
     ```
 
 3. Create the tunnel secret:
@@ -40,10 +41,7 @@ without an mTLS proxy.
 4. Deploy cloudflared:
 
     ```shell
-    helm install $RELEASE_NAME . \
-      --namespace $RELEASE_NAME \
-      --create-namespace \
-      --values values.secrets.yaml
+    helm install $RELEASE_NAME . --namespace $RELEASE_NAME --create-namespace --values values.secrets.yaml
     ```
 
 5. Get the created secret token value:

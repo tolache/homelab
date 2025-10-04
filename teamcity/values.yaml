@@ -1,0 +1,27 @@
+postgres:
+  imageTag: "17"
+  database: "teamcity"
+  secretName: "postgres-credentials"
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "128Mi"
+    limits:
+      cpu: "1"
+      memory: "512Mi"
+  persistence:
+    size: "5Gi"
+
+teamcity:
+  imageTag: ""                       # leave empty to use Chart.appVersion by default
+  memOpts: "-Xmx1g"                  # TEAMCITY_SERVER_MEM_OPTS
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1250Mi"
+    limits:
+      cpu: "4"
+      memory: "2Gi"
+    storageSize: "10Gi"
+  domainName: null                   # specify domain name for TeamCity
+  lanHostname: null                  # specify the hostname used to access TeamCity within the LAN

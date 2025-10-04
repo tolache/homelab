@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teamcity
+  labels:
+    {{- include "teamcity.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "teamcity.selectorLabels" . | nindent 6 }}
+      component: teamcity
+  template:
+    metadata:
+      labels:
+        {{- include "teamcity.labels" . | nindent 8 }}
+        component: teamcity
+      annotations:
+        checksum/database-properties: {{ include (print $.Template.BasePath "/teamcity/secret.yaml") . | sha256sum }}
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
+      terminationGracePeriodSeconds: 180
+      initContainers:
+        - name: set-data-dir-permissions
+          image: busybox:1.36
+          securityContext:
+            runAsUser: 0
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              mkdir -p /data/teamcity_server/datadir/config || echo "/data/teamcity_server/datadir/config already exists"
+              chown -R 1000:1000 /data/teamcity_server/datadir
+              chmod -R g+rwX /data/teamcity_server/datadir
+          volumeMounts:
+            - name: data
+              mountPath: /data/teamcity_server/datadir
+              subPath: datadir
+      containers:
+        - name: teamcity
+          image: "jetbrains/teamcity-server:{{ default .Chart.AppVersion .Values.teamcity.imageTag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8111
+          env:
+            - name: TEAMCITY_SERVER_MEM_OPTS
+              value: {{ .Values.teamcity.memOpts | quote }}
+          resources:
+            requests:
+              cpu: {{ .Values.teamcity.resources.requests.cpu | quote }}
+              memory: {{ .Values.teamcity.resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .Values.teamcity.resources.limits.cpu | quote }}
+              memory: {{ .Values.teamcity.resources.limits.memory | quote }}
+          volumeMounts:
+            - name: data
+              mountPath: /data/teamcity_server/datadir
+              subPath: datadir
+            - name: data
+              mountPath: /opt/teamcity/logs
+              subPath: logs
+            - name: database-properties
+              mountPath: /data/teamcity_server/datadir/config/database.properties
+              subPath: database.properties
+          readinessProbe:
+            httpGet:
+              path: /healthCheck/ready
+              port: 8111
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /healthCheck/ready
+              port: 8111
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: teamcity-data
+        - name: database-properties
+          secret:
+            secretName: database-properties
+            items:
+              - key: database.properties
+                path: database.properties

@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "type": "object",
+  "properties": {
+    "postgres": {
+      "type": "object",
+      "properties": {
+        "imageTag": {
+          "type": "string",
+          "minLength": 1,
+          "description": "postgres image tag"
+        },
+        "database": {
+          "type": "string",
+          "minLength": 1,
+          "description": "postgres database name"
+        },
+        "secretName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Name of the secret containing Postgres DB username and password"
+        },
+        "resources": {
+          "type": "object",
+          "properties": {
+            "requests": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string",
+                  "description": "Min CPU cores"
+                },
+                "memory": {
+                  "type": "string",
+                  "description": "Min memory"
+                }
+              }
+            },
+            "limits": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string",
+                  "description": "Max CPU cores"
+                },
+                "memory": {
+                  "type": "string",
+                  "description": "Max memory"
+                }
+              }
+            },
+            "dataSize": {
+              "type": "string",
+              "description": "Max postgres data volume size"
+            }
+          },
+          "required": [
+          ]
+        }
+      },
+      "required": [
+        "imageTag",
+        "database",
+        "secretName"
+      ]
+    },
+    "teamcity": {
+      "type": "object",
+      "properties": {
+        "imageTag": {
+          "type": "string",
+          "description": "TeamCity image tag"
+        },
+        "memOpts": {
+          "type": "string",
+          "description": "TeamCity server memory options (TEAMCITY_SERVER_MEM_OPTS)"
+        },
+        "resources": {
+          "type": "object",
+          "properties": {
+            "requests": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string",
+                  "description": "Min CPU cores"
+                },
+                "memory": {
+                  "type": "string",
+                  "description": "Min memory"
+                }
+              }
+            },
+            "limits": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string",
+                  "description": "Max CPU cores"
+                },
+                "memory": {
+                  "type": "string",
+                  "description": "Max memory"
+                }
+              },
+              "required": [
+                "cpu",
+                "memory"
+              ]
+            },
+            "storageSize": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Max TeamCity storage size"
+            }
+          },
+          "required": [
+            "limits",
+            "storageSize"
+          ]
+        },
+        "domainName": {
+          "type": "string",
+          "minLength": 3,
+          "description": "TeamCity domain name"
+        },
+        "lanHostname": {
+          "type": "string",
+          "minLength": 3,
+          "description": "TeamCity hostname used to access TeamCity within the LAN"
+        }
+      },
+      "required": [
+        "resources",
+        "domainName",
+        "lanHostname"
+      ]
+    }
+  },
+  "required": [
+    "postgres"
+  ]
+}
