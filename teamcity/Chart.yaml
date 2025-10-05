@@ -2,5 +2,5 @@ apiVersion: v2
 name: teamcity
 description: Minimal TeamCity server + PostgreSQL
 type: application
-version: 1.0.6
+version: 1.1.8
 appVersion: "2025.07.2"

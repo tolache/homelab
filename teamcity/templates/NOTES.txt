@@ -1,4 +1,9 @@
-To connect to TeamCity via (ClusterIP):
+To connect to TeamCity locally via LoadBalancer:
+  open https://tc.{{ .Values.teamcity.domainName }}
+or
+  open http://{{ .Values.teamcity.lanHostname }}
+
+To connect to TeamCity via ClusterIP:
   kubectl -n {{ .Release.Namespace }} port-forward svc/teamcity 8111:8111
   open http://localhost:8111
 

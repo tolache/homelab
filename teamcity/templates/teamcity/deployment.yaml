@@ -6,6 +6,8 @@ metadata:
     {{- include "teamcity.labels" . | nindent 4 }}
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "teamcity.selectorLabels" . | nindent 6 }}
@@ -25,8 +27,8 @@ spec:
         fsGroupChangePolicy: "OnRootMismatch"
       terminationGracePeriodSeconds: 180
       initContainers:
-        - name: set-data-dir-permissions
-          image: busybox:1.36
+        - name: patch-server-xml
+          image: "jetbrains/teamcity-server:{{ default .Chart.AppVersion .Values.teamcity.imageTag }}"
           securityContext:
             runAsUser: 0
           command:
@@ -34,9 +36,35 @@ spec:
             - -c
             - |
               set -e
-              mkdir -p /data/teamcity_server/datadir/config || echo "/data/teamcity_server/datadir/config already exists"
-              chown -R 1000:1000 /data/teamcity_server/datadir
-              chmod -R g+rwX /data/teamcity_server/datadir
+              SRC="/opt/teamcity/conf/server.xml"
+              DST="/work/server.xml"
+              [ -s $SRC ] || { echo "ERROR: $SRC not found in image"; exit 1; }
+              cp "$SRC" "$DST"
+              mkdir -p /work
+              sed -i '/<Connector[[:space:]].*port="8111" protocol="org.apache.coyote.http11.Http11NioProtocol"/ {
+                :a
+                N
+                /\/>/!ba
+                s/\(\/>\)/           secure="true"\n               scheme="https"\n    \1/
+              }' /work/server.xml
+              chown -R 1000:1000 /work/server.xml
+          volumeMounts:
+            - name: server-xml
+              mountPath: /work
+        - name: set-data-dir-permissions
+          image: busybox:1.37
+          securityContext:
+            runAsUser: 0
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              DATA_DIR="/data/teamcity_server/datadir"
+              CONFIG_DIR="$DATA_DIR/config"
+              [ -s $CONFIG_DIR ] || mkdir -p $CONFIG_DIR
+              chown -R 1000:1000 $DATA_DIR
+              chmod -R g+rwX $DATA_DIR
           volumeMounts:
             - name: data
               mountPath: /data/teamcity_server/datadir
@@ -67,6 +95,9 @@ spec:
             - name: database-properties
               mountPath: /data/teamcity_server/datadir/config/database.properties
               subPath: database.properties
+            - name: server-xml
+              mountPath: /opt/teamcity/conf/server.xml
+              subPath: server.xml
           readinessProbe:
             httpGet:
               path: /healthCheck/ready
@@ -93,3 +124,5 @@ spec:
             items:
               - key: database.properties
                 path: database.properties
+        - name: server-xml
+          emptyDir: {}
