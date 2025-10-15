@@ -135,9 +135,24 @@
         "domainName",
         "lanHostname"
       ]
+    },
+    "k8s": {
+      "type": "object",
+      "properties": {
+        "serviceAccountName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Name of the service account used by TeamCity"
+        }
+      },
+      "required": [
+        "serviceAccountName"
+      ]
     }
   },
   "required": [
-    "postgres"
+    "postgres",
+    "teamcity",
+    "k8s"
   ]
 }

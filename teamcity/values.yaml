@@ -25,3 +25,6 @@ teamcity:
     storageSize: "10Gi"
   domainName: null                   # specify domain name for TeamCity
   lanHostname: null                  # specify the hostname used to access TeamCity within the LAN
+
+k8s:
+    serviceAccountName: null         # specify the name of the service account for TeamCity
