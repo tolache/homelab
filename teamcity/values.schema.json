@@ -135,6 +135,18 @@
         "domainName",
         "lanHostname"
       ]
+    },
+    "rbac": {
+      "type": "object",
+      "properties": {
+        "extraUsers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Extra users to be granted cluster-admin role"
+        }
+      }
     }
   },
   "required": [
