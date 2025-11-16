@@ -2,13 +2,13 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ .Release.Name }}-service-account-cluster-admin
+  name: teamcity-cluster-admin
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "teamcity.labels" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: {{ .Release.Name }}-service-account
+    name: teamcity
     namespace: {{ .Release.Namespace }}
 {{- range .Values.rbac.extraUsers }}
   - kind: User

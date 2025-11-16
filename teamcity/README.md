@@ -46,8 +46,7 @@ It also creates a service account with a token that can TeamCity can use to acce
 6. Get the created secret token value:
 
     ```shell
-    SERVICE_ACCOUNT_NAME="$(yq -r '.k8s.serviceAccountName' values.secrets.yaml)"
-    kubectl get secret $SERVICE_ACCOUNT_NAME-token --namespace $RELEASE_NAME --output jsonpath='{.data.token}' | base64 -d
+    kubectl get secret teamcity --namespace $RELEASE_NAME --output jsonpath='{.data.token}' | base64 -d
     ```
 
 7. Save the token value from the output of the last command. It can be used in kubeconfig on by an application to access the cluster API from the internet without an mTLS proxy.

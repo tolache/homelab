@@ -27,4 +27,4 @@ teamcity:
   lanHostname: null                  # specify the hostname used to access TeamCity within the LAN
 
 rbac:
-  extraUsers: []                     # e.g. ["teamcity-prod", "another-user"]
+  extraUsers: []                     # e.g. ["teamcity", "another-user"]
