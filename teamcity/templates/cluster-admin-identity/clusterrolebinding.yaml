@@ -10,11 +10,6 @@ subjects:
   - kind: ServiceAccount
     name: teamcity
     namespace: {{ .Release.Namespace }}
-{{- range .Values.rbac.extraUsers }}
-  - kind: User
-    name: {{ . }}
-    apiGroup: rbac.authorization.k8s.io
-{{- end }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

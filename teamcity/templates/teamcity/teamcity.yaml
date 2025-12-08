@@ -1,0 +1,76 @@
+apiVersion: jetbrains.com/v1beta1
+kind: TeamCity
+metadata:
+  name: teamcity
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "teamcity.labels" . | nindent 4 }}
+  finalizers:
+    - "teamcity.jetbrains.com/finalizer"
+spec:
+  image: "jetbrains/teamcity-server:{{ .Chart.AppVersion }}"
+  startupPropertiesConfig:
+    teamcity.startup.maintenance: "false"
+  databaseSecret:
+    secret: database-properties
+  mainNode:
+    name: main-node
+    spec:
+      requests:
+        cpu: "500m"
+        memory: "1500Mi"
+      limits:
+        cpu: {{ .Values.teamcity.resources.limits.cpu }}
+        memory: {{ .Values.teamcity.resources.limits.memory }}
+  dataDirVolumeClaim:
+    name: teamcity-data-dir
+    volumeMount:
+      name: teamcity-data-dir
+      mountPath: /storage
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: "1Gi"
+        limits:
+          storage: {{ .Values.teamcity.resources.limits.storageSize }}
+  serviceList:
+    - name: main-node
+      spec:
+        selector:
+          app.kubernetes.io/name: teamcity
+          app.kubernetes.io/component: teamcity-server
+          app.kubernetes.io/part-of: teamcity
+        ports:
+          - protocol: TCP
+            port: 8111
+            targetPort: 8111
+        clusterIP: None
+  ingressList:
+    - name: teamcity
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+        nginx.ingress.kubernetes.io/server-snippets: |
+          location / {
+            proxy_http_version 1.1;
+            proxy_set_header X-Forwarded-Host $http_host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-For $remote_addr;
+            proxy_set_header Host $host;
+            proxy_set_header Upgrade $http_upgrade; # WebSocket support
+            proxy_set_header Connection "upgrade"; # WebSocket support
+          }
+      spec:
+        ingressClassName: nginx
+        rules:
+          - host: {{ .Values.teamcity.ingressHost }}
+            http:
+              paths:
+                - backend:
+                    service:
+                      name: main-node
+                      port:
+                        number: 8111
+                  pathType: ImplementationSpecific

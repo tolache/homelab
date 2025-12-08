@@ -6,7 +6,3 @@ app: {{ .Release.Name }}
 {{ include "teamcity.selectorLabels" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
-
-{{- if not (regexMatch "teamcity-.*" .Release.Name) -}}
-WARNING: Your release name ({{ .Release.Name }}) does not follow the recommended convention (teamcity-<env>).
-{{- end -}}

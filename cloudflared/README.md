@@ -34,21 +34,22 @@ without an mTLS proxy.
 
     ```shell
     RELEASE_NAME="cloudflared-prod"
-    kubectl get namespace $RELEASE_NAME || kubectl create namespace $RELEASE_NAME
-    kubectl create secret generic tunnel-credentials --from-file=credentials.json=$HOME/.cloudflared/$TUNNEL_ID.json --namespace $RELEASE_NAME
+    NAMESPACE="cloudflared-prod"
+    kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
+    kubectl create secret generic tunnel-credentials --from-file=credentials.json=$HOME/.cloudflared/$TUNNEL_ID.json --namespace $NAMESPACE
     ```
 
 4. Deploy cloudflared:
 
     ```shell
-    helm install $RELEASE_NAME . --namespace $RELEASE_NAME --create-namespace --values values.secrets.yaml
+    helm install $RELEASE_NAME . --namespace $NAMESPACE --create-namespace --values values.secrets.yaml
     ```
 
 5. Get the created secret token value:
 
     ```shell
     SERVICE_ACCOUNT_NAME="$(yq -r '.k8s.serviceAccountName' values.secrets.yaml)"
-    kubectl get secret $SERVICE_ACCOUNT_NAME-token --namespace $RELEASE_NAME --output jsonpath='{.data.token}' | base64 -d
+    kubectl get secret $SERVICE_ACCOUNT_NAME-token --namespace $NAMESPACE --output jsonpath='{.data.token}' | base64 -d
     ```
 
 6. Save the token value from the output of the last command. It can be used in kubeconfig on by an application to access the cluster API from the internet without an mTLS proxy.

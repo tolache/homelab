@@ -1,10 +1,6 @@
 To connect to TeamCity locally via LoadBalancer:
-  open https://tc.{{ .Values.teamcity.domainName }}
-or
-  open http://{{ .Values.teamcity.lanHostname }}
+  open https://{{ .Values.teamcity.ingressHost }}
 
 To connect to TeamCity via ClusterIP:
-  kubectl -n {{ .Release.Namespace }} port-forward svc/teamcity 8111:8111
+  kubectl -n {{ .Release.Namespace }} port-forward svc/main-node 8111:8111
   open http://localhost:8111
-
-The Postgres credentials are stored in Secret "{{ .Values.postgres.secretName }}".
