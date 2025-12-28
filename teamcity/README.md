@@ -26,8 +26,8 @@ It also creates a service account with a token that can TeamCity can use to acce
 3. Set shell variables:
 
     ```shell
-    NAMESPACE='teamcity-prod'
-    RELEASE_NAME='teamcity-prod'
+    NAMESPACE="teamcity-prod"
+    RELEASE_NAME="teamcity-prod"
     ```
 
 4. Creates the namespace:

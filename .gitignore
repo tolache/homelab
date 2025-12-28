@@ -1,4 +1,5 @@
 .idea
+.junie
 .vscode
 .env
 values.secrets.yaml
