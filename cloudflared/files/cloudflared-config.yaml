@@ -9,4 +9,6 @@ ingress:
     noTLSVerify: true
 - hostname: tc.{{ .Values.domainName }}
   service: http://nginx-ingress-controller.nginx-ingress.svc.cluster.local:80
+- hostname: {{ .Values.domainName }}
+  service: http://traefik.kube-system.svc.cluster.local:80
 - service: http_status:404

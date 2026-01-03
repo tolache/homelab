@@ -10,6 +10,7 @@ It also creates a service account with a token that can TeamCity can use to acce
 - Helm installed.
 - cert-manager installed (`kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.3/cert-manager.yaml`).
 - [nginx ingress controller](https://docs.nginx.com/nginx-ingress-controller/install/helm/open-source/) installed in the cluster. Check with `k get ingressclasses`.
+- [yq](https://github.com/mikefarah/yq) installed.
 
 ## Setup
 

@@ -109,15 +109,15 @@ sudo reboot
 ## Install K3s
 
 ```shell
-$DOMAIN_NAME="example.com"
-curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -s - --tls-san k8s.$DOMAIN_NAME --tls-san tc.$DOMAIN_NAME
+DOMAIN_NAME="example.com"
+curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -s - --tls-san k8s.$DOMAIN_NAME
 ```
 
 ### Authorize K3s in Docker Hub
 
 ```shell
-$DOCKERHUB_USERNAME="example-user"
-$DOCKERHUB_TOKEN="dckr_pat_xxxx" # Create one at https://app.docker.com/settings/personal-access-tokens
+DOCKERHUB_USERNAME="example-user"
+DOCKERHUB_TOKEN="dckr_pat_xxxx" # Create one at https://app.docker.com/settings/personal-access-tokens
 cat <<EOF > /etc/rancher/k3s/registries.yaml
 configs:
   registry-1.docker.io:
@@ -134,9 +134,9 @@ sudo systemctl restart k3s
 Run this directly on the client to copy the kubeconfig file:
 
 ```shell
-$HOST="homelab"
-$USER="homelab-admin"
-$SSH_KEY="$HOME/.ssh/$HOST"
+HOST="homelab"
+USER="homelab-admin"
+SSH_KEY="$HOME/.ssh/$HOST"
 scp -i $SSH_KEY $USER@$HOST:/etc/rancher/k3s/k3s.yaml .
 ```
 
