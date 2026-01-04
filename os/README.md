@@ -142,4 +142,4 @@ scp -i $SSH_KEY $USER@$HOST:/etc/rancher/k3s/k3s.yaml .
 
 Feel free to save the coppied file as `~/.kube/config`.  
 Update the server URL in the config file.  
-Now the Kubernetes cluster is accessible from the LAN. To make it accessible accross the internet, proceed to [cloudflared setup](../cloudflared/README.md).
+Now the Kubernetes cluster is accessible from the LAN. To make it accessible across the internet, proceed to [cloudflared setup](../cloudflared/README.md).
