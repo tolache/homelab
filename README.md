@@ -13,3 +13,8 @@ Exposes Kubernetes API to the internet. [Documentation](cloudflared/README.md).
 ### TeamCity
 
 Runs a TeamCity server. [Documentation](teamcity/README.md).
+
+### TunnelGPT
+
+A Telegram bot that proxies uses messages to OpenAI models, 
+thus making them available in regions where OpenAI is not available. [Documentation](https://github.com/tolache/TunnelGPT?tab=readme-ov-file#deploy)

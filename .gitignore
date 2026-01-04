@@ -1,5 +1,6 @@
 .idea
 .junie
+.output.txt
 .vscode
 .env
 values.secrets.yaml

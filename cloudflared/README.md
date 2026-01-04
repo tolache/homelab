@@ -26,7 +26,7 @@ without an mTLS proxy.
     cloudflared tunnel login
     cloudflared tunnel create $TUNNEL_NAME
     TUNNEL_ID="use note the tunnel ID from the command output above"
-    cloudflared tunnel route dns $TUNNEL_NAME $DOMAIN_NAME
+    cloudflared tunnel route dns $TUNNEL_NAME $DOMAIN_NAME # for apps using path-based routing
     cloudflared tunnel route dns $TUNNEL_NAME k8s.$DOMAIN_NAME
     cloudflared tunnel route dns $TUNNEL_NAME tc.$DOMAIN_NAME
     ```
