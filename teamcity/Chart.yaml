@@ -3,4 +3,4 @@ name: teamcity
 description: TeamCity server + PostgreSQL database + Ingress and Service
 type: application
 version: 4.0.6
-appVersion: "2025.11.3"
+appVersion: "2025.11.4"
