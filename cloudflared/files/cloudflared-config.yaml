@@ -11,7 +11,7 @@ ingress:
   path: /app/agents
   service: http_status:403
 - hostname: tc.{{ .Values.domainName }}
-  service: http://nginx-ingress-controller.nginx-ingress.svc.cluster.local:80
+  service: http://teamcity-prod-ingress-nginx-controller.teamcity-prod.svc.cluster.local:80
 - hostname: {{ .Values.domainName }}
   service: http://traefik.kube-system.svc.cluster.local:80
 - service: http_status:404

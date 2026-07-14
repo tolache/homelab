@@ -21,3 +21,7 @@ teamcity:
       memory: "2Gi"
       storageSize: "10Gi"
   ingressHost: null                  # specify TeamCity FQDN
+
+ingress-nginx:
+  controller:
+    allowSnippetAnnotations: true
