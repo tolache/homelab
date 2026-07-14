@@ -8,6 +8,9 @@ ingress:
   originRequest:
     noTLSVerify: true
 - hostname: tc.{{ .Values.domainName }}
+  path: /app/agents
+  service: http_status:403
+- hostname: tc.{{ .Values.domainName }}
   service: http://nginx-ingress-controller.nginx-ingress.svc.cluster.local:80
 - hostname: {{ .Values.domainName }}
   service: http://traefik.kube-system.svc.cluster.local:80
