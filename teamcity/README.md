@@ -19,7 +19,7 @@ It also creates a service account with a token that can TeamCity can use to acce
     ```shell
     helm upgrade --install teamcity-operator \
     -n teamcity-operator --create-namespace \
-    https://github.com/JetBrains/teamcity-operator/releases/download/0.0.20/teamcity-operator-0.0.20.tgz
+    https://github.com/JetBrains/teamcity-operator/releases/download/0.0.22/teamcity-operator-0.0.22.tgz
     ```
 
 2. Run `cp values.yaml values.secrets.yaml` and populate the missing values in the new file.
