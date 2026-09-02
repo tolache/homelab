@@ -77,7 +77,3 @@ It also creates a service account with a token that can TeamCity can use to acce
      ```
 
 11. Save the token value from the output of the last command. It can be used in kubeconfig on by an application to access the cluster API from the internet without an mTLS proxy.
-
-## TODO
-
-1. Check if `app.kubernetes.io/name: teamcity`, `app.kubernetes.io/part-of: teamcity`, or `ingressList: -name: teamcity` need to use `{{ .Release.Name }}`.
