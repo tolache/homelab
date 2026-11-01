@@ -21,6 +21,18 @@ Everything else is done via SSH from the client, unless explicitly stated otherw
 ssh -i ~/.ssh/<generated_key_name> <user>@<servername>
 ```
 
+## Update Debian
+
+Install available updates before setting up the server:
+
+```shell
+sudo apt update
+sudo apt full-upgrade
+sudo reboot
+```
+
+After the server restarts, reconnect over SSH.
+
 ## Restrict password SSH access
 
 ```shell
@@ -29,8 +41,10 @@ sudo apt install -y neovim
 sudo nvim /etc/ssh/sshd_config
 # Set this (uncommented):
 # PasswordAuthentication no
-sudo systemctl restart ssh
+sudo /usr/sbin/sshd -t && sudo systemctl restart ssh
 ```
+
+Keep the current SSH session open and verify that you can connect in a second terminal before closing it.
 
 ## Use 4k 16:10 in terminal
 
@@ -97,8 +111,8 @@ sudo sensors-detect --auto
 This is recommended for running Kubernetes.
 
 ```shell
-sudop swapoff -a
-systemctl --type swap
+sudo swapoff -a
+systemctl --type=swap --all
 # note the unit name, e.g. dev-XXXX.swap
 sudo systemctl mask dev-XXXX.swap
 sudo nvim /etc/fstab
@@ -118,14 +132,14 @@ curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -s - --tls-san k8s.$
 ```shell
 DOCKERHUB_USERNAME="example-user"
 DOCKERHUB_TOKEN="dckr_pat_xxxx" # Create one at https://app.docker.com/settings/personal-access-tokens
-cat <<EOF > /etc/rancher/k3s/registries.yaml
+sudo install -m 600 /dev/null /etc/rancher/k3s/registries.yaml
+sudo tee /etc/rancher/k3s/registries.yaml > /dev/null <<EOF
 configs:
   registry-1.docker.io:
     auth:
       username: $DOCKERHUB_USERNAME
-      token: $DOCKERHUB_TOKEN
+      password: $DOCKERHUB_TOKEN
 EOF
-sudo systemctl daemon-reload
 sudo systemctl restart k3s
 ```
 
@@ -135,11 +149,12 @@ Run this directly on the client to copy the kubeconfig file:
 
 ```shell
 HOST="homelab"
-USER="homelab-admin"
+SSH_USER="homelab-admin"
 SSH_KEY="$HOME/.ssh/$HOST"
-scp -i $SSH_KEY $USER@$HOST:/etc/rancher/k3s/k3s.yaml .
+scp -i "$SSH_KEY" "$SSH_USER@$HOST:/etc/rancher/k3s/k3s.yaml" .
+chmod 600 k3s.yaml
 ```
 
-Feel free to save the coppied file as `~/.kube/config`.  
+Feel free to save the coppied file as `~/.kube/config` (in this case, also run `chmod 600 ~/.kube/config`).  
 Update the server URL in the config file.  
 Now the Kubernetes cluster is accessible from the LAN. To make it accessible across the internet, proceed to [cloudflared setup](../cloudflared/README.md).
