@@ -25,3 +25,5 @@ teamcity:
 ingress-nginx:
   controller:
     allowSnippetAnnotations: true
+    service:
+      type: ClusterIP
