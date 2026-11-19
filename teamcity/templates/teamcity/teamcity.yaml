@@ -16,6 +16,9 @@ spec:
   mainNode:
     name: main-node
     spec:
+      env:
+        TEAMCITY_SERVER_MEM_OPTS: {{ .Values.teamcity.serverMemOpts | quote }}
+        TEAMCITY_SERVER_OPTS: {{ .Values.teamcity.serverOpts | quote }}
       requests:
         cpu: "500m"
         memory: "1500Mi"
