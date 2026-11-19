@@ -14,8 +14,6 @@ postgres:
 
 teamcity:
   imageTag: ""                       # leave empty to use Chart.appVersion by default
-  serverMemOpts: "-Xmx1g"            # TEAMCITY_SERVER_MEM_OPTS
-  serverOpts: ""                     # TEAMCITY_SERVER_OPTS
   resources:
     limits:
       cpu: "4"
