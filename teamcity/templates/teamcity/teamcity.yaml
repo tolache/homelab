@@ -16,10 +16,6 @@ spec:
   mainNode:
     name: main-node
     spec:
-      {{- if .Values.teamcity.serverOpts }}
-      env:
-        TEAMCITY_SERVER_OPTS: {{ printf "$(TEAMCITY_SERVER_OPTS) %s" .Values.teamcity.serverOpts | quote }}
-      {{- end }}
       requests:
         cpu: "500m"
         memory: "1500Mi"
